@@ -1,5 +1,5 @@
 ---
-name: dev-analysis-jira
+name: dev-analysis
 description: Generate SPDD enriched context from a Jira story, with review loop and git commit. For developers in a repository.
 metadata:
   type: skill
@@ -494,7 +494,7 @@ Example:
 
 ---
 
-Generated via dev-analysis-jira skill.
+Generated via dev-analysis skill.
 ```
 
 ---
@@ -557,7 +557,7 @@ Return to developer:
 
 🔗 Next Steps:
 - Review the PR and merge when ready
-- Run the dev-canvas-jira skill to generate the REASONS Canvas
+- Run the dev-implement skill to generate the REASONS Canvas
 - Then /spdd-generate to write the implementation
 
 💬 Feedback on the analysis? Ask for revisions anytime.
@@ -587,15 +587,15 @@ Return to developer:
 This skill is the **dev-side Phase 0** — bridges Jira (product source of truth) to git (technical source of truth):
 
 ```
-Jira Story (created by po-story-jira)
+Jira Story (created by po-story)
           ↓
-  dev-analysis-jira skill (you are here)
+  dev-analysis skill (you are here)
           ↓
   spdd/analysis/{KEY}-*.md (enriched context)
           ↓
   [Merge PR]
           ↓
-  dev-canvas-jira skill (future)
+  dev-implement skill (future)
           ↓
   spdd/prompt/{KEY}-*.md (REASONS Canvas)
           ↓

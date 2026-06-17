@@ -1,5 +1,5 @@
 ---
-name: po-story-jira
+name: po-story
 description: Generate INVEST-compliant user story and create it directly in Jira. For product owners creating requirements without technical knowledge.
 metadata:
   type: skill

@@ -1,5 +1,5 @@
 ---
-name: dev-canvas-jira
+name: dev-implement
 description: Generate REASONS canvas from a Jira story + analysis doc, with review loop, then TDD code generation, lint, build, and PR update. For developers in a repository.
 metadata:
   type: skill
@@ -7,7 +7,7 @@ metadata:
 
 Generate the REASONS Canvas (R/E/A/S/O/N/S) from an existing analysis artefact and Jira story, review with developer, then generate implementation code and tests (TDD), commit everything, and update the GitHub PR. Output: a PR containing analysis doc, canvas, implementation, and tests. Jira transitions to "In Review".
 
-**Entry point:** Use after `dev-analysis-jira` has run for this issue — requires an existing analysis doc and Jira comment with PR URL.
+**Entry point:** Use after `dev-analysis` has run for this issue — requires an existing analysis doc and Jira comment with PR URL.
 
 **Prerequisites:** Must be run from within the project git repository. Requires Atlassian MCP, GitHub access (`gh` CLI or MCP), and a working dev environment (pnpm/npm/etc.).
 
@@ -41,17 +41,17 @@ fields: ["summary", "description", "issuetype", "created", "labels", "comment"]
 
 Extract:
 - Summary, full description, acceptance criteria, issue type
-- All comments (look for the `dev-analysis-jira` comment in the next step)
+- All comments (look for the `dev-analysis` comment in the next step)
 
 ---
 
 ### Step 3: Locate analysis artefact and determine branch/PR strategy
 
-**Find the analysis comment:** Scan comments for the most recent one containing "SPDD Analysis complete" (posted by `dev-analysis-jira`). Extract:
+**Find the analysis comment:** Scan comments for the most recent one containing "SPDD Analysis complete" (posted by `dev-analysis`). Extract:
 - Analysis file path (e.g. `spdd/analysis/OB-401-*.md`)
 - PR URL (e.g. `https://github.com/co-cddo/repo/pull/2`)
 
-If no such comment found: error — "No dev-analysis-jira comment found on {KEY}. Run dev-analysis-jira first."
+If no such comment found: error — "No dev-analysis comment found on {KEY}. Run dev-analysis first."
 
 **Determine PR state:** From the PR URL, extract owner, repo, and PR number. Call `mcp__github__pull_request_read` (method: `get`) to check whether the PR is open or merged.
 
@@ -77,13 +77,13 @@ Note the case — it drives Step 16.
 
 ### Step 4: Read analysis artefact
 
-Read the full analysis file identified in Step 3. This is the primary input to canvas generation — it contains the domain concept identification, strategic approach, and risk/gap analysis from the prior `dev-analysis-jira` run.
+Read the full analysis file identified in Step 3. This is the primary input to canvas generation — it contains the domain concept identification, strategic approach, and risk/gap analysis from the prior `dev-analysis` run.
 
 ---
 
 ### Step 5: Read codebase context
 
-Re-fingerprint the project quickly (same approach as `dev-analysis-jira` Steps 4–7):
+Re-fingerprint the project quickly (same approach as `dev-analysis` Steps 4–7):
 
 a. **Primary build/dependency file** (ONE): `package.json`, `pom.xml`, `go.mod`, etc. — detect tech stack, key dependencies, and available scripts (`test`, `build`, `dev`, `lint`).
 
@@ -510,7 +510,7 @@ In both cases, set the PR description to the body from Step 17.
 
 ---
 
-Generated via dev-canvas-jira skill.
+Generated via dev-implement skill.
 ```
 
 ---
@@ -570,9 +570,39 @@ If no matching transition found: skip silently; note in Step 20 summary.
 
 🔗 Next Steps:
 - Review the PR (canvas + implementation + tests in one diff)
-- If changes are needed, re-run dev-canvas-jira — it will update the existing branch
+- If changes are needed, re-run dev-implement — it will update the existing branch
 - Merge when approved
 ```
+
+---
+
+### Step 21 (optional): Take and upload a screenshot to the PR
+
+Ask:
+
+> "Would you like me to take a screenshot of the feature and attach it to the PR?"
+
+If yes:
+
+1. **Derive the URL** from context already in scope:
+   - Check canvas Operations for UI routes/pages introduced by this story
+   - Check implementation files for route definitions or page components
+   - Check dev server config (`package.json` scripts, `.env`, `vite.config`) for base URL and port
+   - Construct the full URL to the feature under review
+2. State: `"I'll screenshot {URL} — reply to use a different page."` then proceed without waiting
+3. Start the dev server if not already running (use the project's standard dev command)
+4. Navigate to the derived URL using the browser tool and take a screenshot
+5. Post as a PR comment:
+   ```
+   gh pr comment {PR URL} --body "![Screenshot]({image})"
+   ```
+   If inline image rendering fails, upload via the assets API and reference the returned URL:
+   ```
+   gh api repos/{owner}/{repo}/issues/{number}/assets --input {screenshot file}
+   ```
+6. Confirm: `"Screenshot added to PR."`
+
+If the feature has no navigable UI (pure API/backend story), skip this step silently.
 
 ---
 
@@ -594,13 +624,13 @@ If no matching transition found: skip silently; note in Step 20 summary.
 ## Integration with SPDD Workflow
 
 ```
-Jira Story (created by po-story-jira)
+Jira Story (created by po-story)
           ↓
-  dev-analysis-jira skill
+  dev-analysis skill
           ↓
   spdd/analysis/{KEY}-*.md  +  GitHub PR (analysis branch)
           ↓
-  dev-canvas-jira skill (you are here)
+  dev-implement skill (you are here)
           ↓
   spdd/prompt/{KEY}-*.md  +  implementation code + tests
           ↓
