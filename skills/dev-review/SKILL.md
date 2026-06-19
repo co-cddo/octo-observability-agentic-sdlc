@@ -498,9 +498,11 @@ cloudId: {cloudId}
 issueIdOrKey: {KEY}
 commentBody: |
   ✅ PR merged · Score: {score}/100 · Reviewer: {git user.name}
+  Pull Request: [PR #{PR_NUMBER}]({PR_URL})
   Review artefact: spdd/review/{filename}
 contentFormat: markdown
 ```
+Use Markdown hyperlinks (`[text](url)`) for all URLs in Jira comments — bare URLs are not clickable in Jira's Markdown renderer.
 
 Display: "Done. Branch merged. Jira → Done."
 
@@ -534,8 +536,11 @@ issueIdOrKey: {KEY}
 commentBody: |
   🔄 Changes requested · Reviewer: {git user.name}
   {feedback text (first 200 chars if longer)}
+  Pull Request: [PR #{PR_NUMBER}]({PR_URL})
 contentFormat: markdown
 ```
+Use Markdown hyperlinks (`[text](url)`) for all URLs in Jira comments — bare URLs are not clickable in Jira's Markdown renderer. Where findings reference specific files, link to the relevant file or line in GitHub (e.g. `[monitoring.ts]({PR_files_url})`).
+
 
 Jira status: leave in "In Review" — do NOT transition.
 
@@ -580,8 +585,10 @@ issueIdOrKey: {KEY}
 commentBody: |
   ❌ PR closed · Reviewer: {git user.name}
   Reason: {reason text}
+  Pull Request: [PR #{PR_NUMBER}]({PR_URL})
 contentFormat: markdown
 ```
+Use Markdown hyperlinks (`[text](url)`) for all URLs in Jira comments — bare URLs are not clickable in Jira's Markdown renderer.
 
 Display: "PR closed. Jira → In Progress."
 
