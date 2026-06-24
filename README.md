@@ -18,10 +18,10 @@ This symlinks each skill into `~/.claude/skills/`. Restart Claude Code to pick t
 
 | Skill | Description |
 |---|---|
+| `po-story` | Generate INVEST-compliant user story and create it in Jira |
 | `dev-analysis` | Generate SPDD enriched context from a Jira story |
 | `dev-implement` | Generate REASONS canvas from a Jira story + analysis doc, then TDD code generation and PR |
 | `dev-review` | Review a PR from dev-implement: AI-scored findings, interactive testing, gated merge/reject flow |
-| `po-story` | Generate INVEST-compliant user story and create it in Jira |
 
 ## Contributing
 
