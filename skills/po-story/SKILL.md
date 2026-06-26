@@ -17,13 +17,14 @@ Generate a business-focused, INVEST-compliant user story from a natural-language
 
 ### Step 1: Gather Jira configuration
 
-Check if Jira config (cloud ID, project key) is known from prior conversation context. If not, use `AskUserQuestion` to collect:
+Check if Jira config (cloud ID, project key) is known from prior conversation context. If not, ask the user directly in plain text (do NOT use `AskUserQuestion` — it requires predefined options and these are free-text inputs):
 
-```
-1. Jira cloud domain (e.g., "mycompany.atlassian.net" or just "mycompany")
-2. Project key (e.g., "OCTO", "PROJ")
-3. Optional: Epic link or default sprint (can be set later if unknown)
-```
+> "I need a few details to create the Jira story:
+> 1. **Jira cloud domain** (e.g., "mycompany.atlassian.net" or just "mycompany")
+> 2. **Project key** (e.g., "OCTO", "PROJ")
+> 3. **Epic link or default sprint** (optional — can be set later if unknown)"
+
+Wait for the user's reply before proceeding.
 
 Store these in conversation context so subsequent invocations in the same session don't re-ask.
 
