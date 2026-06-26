@@ -305,7 +305,6 @@ Return to PO:
 
 ## Guardrails
 
-- **Do NOT ask clarifying questions about the requirement** — take the PO's input as-is; surface ambiguities in Risk & Gap Analysis instead
 - **Do NOT proceed without Jira config** — ask, don't assume
 - **Do NOT create issue without PO confirmation** — explicit gate required
 - **Do NOT assume existing story numbers** — always fetch from Jira to determine next available
