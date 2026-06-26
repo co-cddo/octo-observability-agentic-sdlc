@@ -302,9 +302,24 @@ Example:
 
 ---
 
-### Step 12: Assemble the enriched context document
+### Step 12: Assemble, name, and write the enriched context document
 
-Combine all analysis into a final document:
+Combine all analysis into a final document and immediately persist it to disk so it is not lost if the session is interrupted.
+
+#### 12a: Derive output file name
+
+```
+{JIRA}-{TIMESTAMP}-[Analysis]-{description}.md
+```
+
+Where:
+- **JIRA**: The issue key extracted from Jira (e.g., `OB-401`) or `GGQPA-XXX` if key not reliably extractable
+- **TIMESTAMP**: Current time in `YYYYMMDDHHmm` format (e.g., `202606161430`)
+- **description**: Derived from Jira summary in kebab-case, max 10 words (e.g., `real-time-sbom-submission-dashboard`)
+
+Example: `OB-401-202606161430-[Analysis]-real-time-sbom-submission-dashboard.md`
+
+#### 12b: Assemble the document
 
 ```markdown
 # SPDD Analysis: [Derived Title from Jira Summary]
@@ -347,6 +362,16 @@ Combine all analysis into a final document:
 - Every section must contain concrete, specific content — no placeholders
 - Stay conceptual/strategic — do NOT include implementation details (specific queries, JSON shapes, method signatures, annotations, component inventories, step-by-step logic)
 
+#### 12c: Write to disk immediately
+
+```bash
+mkdir -p spdd/analysis
+```
+
+Write the complete enriched context document to `spdd/analysis/{filename}.md`.
+
+**This ensures the analysis is never lost even if the session ends unexpectedly.**
+
 ---
 
 ### Step 13: Display to developer for review
@@ -380,6 +405,7 @@ Accept natural language feedback and regenerate affected sections only:
 a. **If developer provides feedback:**
    - Identify which section(s) need changes
    - Regenerate only that section (don't regenerate the whole document)
+   - **Update the file on disk** (`spdd/analysis/{filename}.md`) with the revised content
    - Re-display the full document with the updated section highlighted or marked
 
 b. **If developer confirms** (e.g., "LGTM", "looks good", "yes"):
@@ -388,39 +414,11 @@ b. **If developer confirms** (e.g., "LGTM", "looks good", "yes"):
 c. **If developer asks for more changes:**
    - Repeat 14a
 
-**Key:** Preserve the review loop until developer explicitly confirms. Accept multiple rounds of refinement.
+**Key:** Preserve the review loop until developer explicitly confirms. Accept multiple rounds of refinement. Every revision is saved to disk immediately.
 
 ---
 
-### Step 15: Derive output file name
-
-Create a consistent file name for the analysis:
-
-```
-{JIRA}-{TIMESTAMP}-[Analysis]-{description}.md
-```
-
-Where:
-- **JIRA**: The issue key extracted from Jira (e.g., `OB-401`) or `GGQPA-XXX` if key not reliably extractable
-- **TIMESTAMP**: Current time in `YYYYMMDDHHmm` format (e.g., `202606161430`)
-- **description**: Derived from Jira summary in kebab-case, max 10 words (e.g., `real-time-sbom-submission-dashboard`)
-
-Example: `OB-401-202606161430-[Analysis]-real-time-sbom-submission-dashboard.md`
-
----
-
-### Step 16: Write analysis file
-
-a. **Ensure directory exists:**
-   ```bash
-   mkdir -p spdd/analysis
-   ```
-
-b. **Write the complete enriched context document to `spdd/analysis/{filename}.md`**
-
----
-
-### Step 17: Git workflow — branch, commit, push, PR
+### Step 15: Git workflow — branch, commit, push, PR
 
 a. **Create and checkout branch:**
    ```bash
@@ -449,12 +447,12 @@ e. **Create Pull Request** via `mcp__github__create_pull_request`:
    title: "[{JIRA-KEY}] SPDD analysis"
    head: "spdd/{JIRA-KEY}-analysis"
    base: "main" (or infer from repo default)
-   body: [see Step 18]
+   body: [see Step 16]
    ```
 
 ---
 
-### Step 18: PR body
+### Step 16: PR body
 
 Construct the PR description:
 
@@ -499,7 +497,7 @@ Generated via dev-analysis skill.
 
 ---
 
-### Step 19: Update Jira issue
+### Step 17: Update Jira issue
 
 a. **Fetch available transitions** for the issue via `mcp__atlassian__getTransitionsForJiraIssue`:
    ```
@@ -511,19 +509,19 @@ a. **Fetch available transitions** for the issue via `mcp__atlassian__getTransit
 b. **Automatically transition to In Progress:**
    - From the fetched transitions, find one whose name matches "In Progress" (case-insensitive; also accept "Start", "Start Development", "Begin" if "In Progress" is absent)
    - If found: call `mcp__atlassian__transitionJiraIssue` with that transition ID — no prompt needed
-   - If no matching transition found: skip silently; note in Step 21 summary that transition was skipped
+   - If no matching transition found: skip silently; note in Step 19 summary that transition was skipped
 
 c. **Add Jira comment** via `mcp__atlassian__addCommentToJiraIssue`:
    ```
    cloudId: [from session]
    issueIdOrKey: {JIRA-KEY}
-   commentBody: [see Step 20]
+   commentBody: [see Step 18]
    contentFormat: "markdown"
    ```
 
 ---
 
-### Step 20: Jira comment body
+### Step 18: Jira comment body
 
 Construct a brief summary comment:
 
@@ -541,7 +539,7 @@ Pull Request: [View PR on GitHub]({PR URL})
 
 ---
 
-### Step 21: Report success
+### Step 19: Report success
 
 Return to developer:
 
