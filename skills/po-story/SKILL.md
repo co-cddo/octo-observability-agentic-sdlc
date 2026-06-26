@@ -24,6 +24,8 @@ Check if Jira config (cloud ID, project key) is known from prior conversation co
 > 2. **Project key** (e.g., "OCTO", "PROJ")
 > 3. **Epic link or default sprint** (optional — can be set later if unknown)"
 
+**IMPORTANT:** Ask ONLY these Jira configuration questions. Do NOT ask clarifying questions about the requirement itself (e.g., "what type of system?", "who is the audience?", "can you elaborate?"). Take the PO's requirement as-is and work with whatever information they provided. If details are ambiguous, surface them as risks in the Risk & Gap Analysis (Step 11) rather than interrogating the PO upfront.
+
 Wait for the user's reply before proceeding.
 
 Store these in conversation context so subsequent invocations in the same session don't re-ask.
@@ -303,6 +305,7 @@ Return to PO:
 
 ## Guardrails
 
+- **Do NOT ask clarifying questions about the requirement** — take the PO's input as-is; surface ambiguities in Risk & Gap Analysis instead
 - **Do NOT proceed without Jira config** — ask, don't assume
 - **Do NOT create issue without PO confirmation** — explicit gate required
 - **Do NOT assume existing story numbers** — always fetch from Jira to determine next available
