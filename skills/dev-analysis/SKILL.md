@@ -521,9 +521,10 @@ c. **If developer asks for more changes:**
 
 a. **Create and checkout branch:**
    ```bash
-   git checkout -b spdd/{JIRA-KEY}-analysis
+   git checkout -b spdd/{JIRA-KEY}-{slug}
    ```
-   Example: `git checkout -b spdd/OB-401-analysis`
+   Where `{slug}` is a short kebab-case summary (3-5 words) derived from the Jira story summary.
+   Example: `git checkout -b spdd/OB-401-add-login-endpoint`
 
 b. **Stage the file:**
    ```bash
@@ -544,7 +545,7 @@ d. **Push with upstream (leveraging user's `push.autosetupremote = true`):**
 e. **Create Pull Request** via `mcp__github__create_pull_request`:
    ```
    title: "[{JIRA-KEY}] SPDD analysis"
-   head: "spdd/{JIRA-KEY}-analysis"
+   head: "spdd/{JIRA-KEY}-{slug}"
    base: "main" (or infer from repo default)
    body: [see Step 11]
    ```
