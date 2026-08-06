@@ -542,12 +542,13 @@ d. **Push with upstream (leveraging user's `push.autosetupremote = true`):**
    git push
    ```
 
-e. **Create Pull Request** via `mcp__github__create_pull_request`:
+e. **Create Pull Request (as draft)** via `mcp__github__create_pull_request`:
    ```
    title: "[{JIRA-KEY}] SPDD analysis"
    head: "spdd/{JIRA-KEY}-{slug}"
    base: "main" (or infer from repo default)
    body: [see Step 11]
+   draft: true
    ```
 
 ---
