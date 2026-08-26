@@ -469,6 +469,11 @@ git push
 
 In both cases, set the PR description to the body from Step 17.
 
+**Then mark the PR as ready for review (undraft):**
+```bash
+gh pr ready {PR number or URL}
+```
+
 ---
 
 ### Step 17: PR body
