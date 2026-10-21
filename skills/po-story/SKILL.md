@@ -56,52 +56,11 @@ Fields: summary, description, created, customfield_* (story points if available)
 
 ### Step 3: INVEST Analysis and story generation
 
-#### Step 3a: Abstract task identification
+Read [references/story-rules.md](references/story-rules.md) before continuing. It holds the story rules, shared with the unattended runner, that Steps 3 and 4 follow.
 
-Analyze the PO's requirement at a conceptual level:
+#### Step 3a–3b: Analyse the requirement
 
-```
-### Abstract Task: "[Feature Name]"
-
-**Analysis Dimensions**:
-- **Core Responsibility**: [Primary purpose of this feature]
-- **Primary Operations**: [Main operations: create, query, update, delete, list, search]
-- **Key Constraints**: [Data uniqueness, permissions, associations, business rules]
-- **Technical Complexity**: [Low/Medium/High]
-- **Business Complexity**: [Low/Medium/High]
-```
-
-#### Step 3b: INVEST compliance check
-
-Evaluate the requirement:
-
-```
-### INVEST Evaluation:
-- ✅/❌ **Independent**: Can be developed, tested, deployed independently?
-- ✅/❌ **Negotiable**: Can design details be discussed with the team?
-- ✅/❌ **Valuable**: Does this provide clear business value?
-- ✅/❌ **Estimable**: Can effort be estimated (1–5 days)?
-- ✅/❌ **Small**: Can be completed within that timeframe?
-- ✅/❌ **Testable**: Are there clear acceptance criteria?
-
-**Conclusion**: [Needs splitting / Ready as-is]
-```
-
-If splitting is needed:
-
-```
-### Split Strategy
-**Dimensions** (choose most appropriate):
- - By operation type: CREATE-READ / UPDATE-DELETE / LIST-SEARCH
- - By complexity: Basic / Advanced / Admin
- - By user role: Regular user / Admin
- - By technical dependency: Core / Extension
-
-**Rules**:
- - Max 2–3 functional points per story
- - 1–5 day workload per story
- - Each story delivers independent business value
-```
+Produce the Abstract Task, the INVEST Evaluation and, if splitting is needed, the Split Strategy, as described in **Part 1** of the story rules.
 
 #### Step 3c: Display INVEST analysis to PO
 
@@ -115,117 +74,7 @@ If splitting is recommended, also show the split rationale.
 
 ### Step 4: Generate the story (or stories if split)
 
-For each story (if 1 story, do this once; if 3 stories, repeat 3 times):
-
-#### 4a: Story title and number
-
-Use the next available story number from Step 2. Format:
-
-```
-## [STORY-{NEXT-NUM}] {Operation Description} API Development
-```
-
-Example: `## [STORY-003] Create audit logging submission capability`
-
-#### 4b: Background section
-
-```markdown
-### Background
-[Business motivation, role, use cases — 2–3 sentences]
-
-Key points:
-- Business value and user needs
-- Relationship with other features
-- Why this capability is needed now
-```
-
-#### 4c: Business Value section
-
-```markdown
-### Business Value
-- Provide {specific capability} for {role}
-- Support {specific need} in {business scenario}
-- Enable {key function} of {system goal}
-```
-
-#### 4d: Dependencies and Assumptions
-
-```markdown
-### Dependencies and Assumptions
-- **Prerequisites**: [Features/stories that must be completed first, if any]
-- **Data assumptions**: [What data/entities expected to exist]
-- **Integration points**: [External systems, APIs, services]
-- **Business constraints**: [Regulatory, contractual, organizational constraints]
-```
-
-#### 4e: Scope In / Scope Out
-
-```markdown
-### Scope In
-- [Feature included in this story — bullets]
-
-### Scope Out
-- [Feature NOT included — bullets]
-```
-
-#### 4f: Acceptance Criteria
-
-Generate business-focused ACs using Given-When-Then format. Cover:
-
-**Happy path ACs** — core business scenarios with concrete examples:
-```markdown
-#### AC1: {Business Scenario Description}
-**Given** {business precondition with concrete values/examples}
-**When** {user action in business language}
-**Then** {expected business outcome with specific numbers}
-```
-
-**Validation and business rule ACs**:
-```markdown
-#### AC{N}: {Validation Scenario}
-**Given** {invalid or edge-case input condition}
-**When** {user attempts the action}
-**Then** {system rejects with clear user-facing message}
-```
-
-**Error condition ACs**:
-```markdown
-#### AC{N}: {Error Scenario}
-**Given** {condition that causes failure}
-**When** {user attempts the action}
-**Then** {system responds with appropriate error and HTTP status}
-```
-
-**AC writing rules:**
-- Use **business language**, not implementation details
-- Include **concrete numbers and examples** (e.g., "100,000 monthly quota, 80,000 used" not "some quota")
-- HTTP status codes ARE acceptable (part of API contract)
-- Each AC independently testable by QA
-- Do NOT prescribe HOW (no "use parameterized queries", "apply caching", etc.)
-- Do NOT specify internal details (no JSON format, DB schema, error codes)
-
-**Estimated effort:** Based on story size and functional points, estimate 1–5 days.
-
-#### 4g: Quality check
-
-Verify each generated story against:
-
-**Structure**:
- - [ ] All required sections present (Background, Business Value, Dependencies/Assumptions, Scope In/Out, ACs)
- - [ ] Each AC uses Given-When-Then with concrete values
- - [ ] ACs written in business language
- - [ ] ACs cover happy path, validation/rules, error conditions
-
-**Business clarity**:
- - [ ] Business value clear for specific audience/role
- - [ ] Scope In/Out clearly delineate boundaries
- - [ ] No duplication with existing Jira stories
- - [ ] QA engineer could write test cases from ACs alone
-
-**Sizing**:
- - [ ] Max 2–3 functional points
- - [ ] Independently deliverable
- - [ ] 1–5 day workload estimate
+Write each story as described in **Part 2** of the story rules, including its quality check. Use the product history from Step 2 for the story number and to avoid duplicating existing stories.
 
 ---
 
@@ -308,12 +157,7 @@ Return to PO:
 - **Do NOT proceed without Jira config** — ask, don't assume
 - **Do NOT create issue without PO confirmation** — explicit gate required
 - **Do NOT assume existing story numbers** — always fetch from Jira to determine next available
-- **Do NOT summarize the PO prompt** — preserve full information when referencing
-- **Do NOT leave placeholders** — generate complete, specific content
-- **ACs MUST be in business language** — no technical implementation details
-- **Each story MUST have concrete examples** — no vague acceptance criteria
-- **Do NOT prescribe HOW** — only WHAT the expected behavior is
-- **Do NOT specify error JSON formats or P99 metrics** — those belong in `/spdd-reasons-canvas` Safeguards, not ACs
+- **Follow the content rules** in [references/story-rules.md](references/story-rules.md) — they apply to every story this skill writes
 
 ---
 
