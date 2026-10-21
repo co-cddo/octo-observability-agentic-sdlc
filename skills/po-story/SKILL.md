@@ -39,13 +39,13 @@ Store these in conversation context so subsequent invocations in the same sessio
 Query existing stories via `mcp__atlassian__searchJiraIssuesUsingJql`:
 
 ```
-JQL: project = {projectKey} AND issuetype = Story ORDER BY created DESC
+JQL: project = {projectKey} AND issuetype = Story AND (labels IS EMPTY OR labels != template) ORDER BY created DESC
 Limit: 20 most recent stories
-Fields: summary, description, created, customfield_* (story points if available)
+Fields: summary, description, labels, parent, status, created
 ```
 
 **Process the results:**
-- Extract story titles and their naming style
+- Extract story titles and their naming style, ignoring cancelled stories and status prefixes such as `[IN SPRINT]`
 - Note any recurring theme labels or epic associations
 - Scan AC patterns (if description contains "Given-When-Then", note the format)
 
@@ -55,7 +55,7 @@ Fields: summary, description, created, customfield_* (story points if available)
 
 ### Step 3: INVEST Analysis and story generation
 
-Read [references/story-rules.md](references/story-rules.md) before continuing. It holds the story rules, shared with the unattended runner, that Steps 3 and 4 follow.
+Read [references/story-rules.md](references/story-rules.md) before continuing. It holds the story rules that Steps 3 and 4 follow, which the planned unattended runner will also use.
 
 #### Step 3a–3b: Analyse the requirement
 
@@ -75,7 +75,9 @@ If splitting is recommended, also show the split rationale.
 
 Write each story as described in **Part 2** of the story rules, including its quality check. Use the product history from Step 2 to match the style of recent stories and avoid duplicating them.
 
-For the request details, use whatever the PO's requirement says about who asked and where it came from. If it says nothing, the requester is the PO running this skill (look up their name with `mcp__atlassian__atlassianUserInfo` if you don't know it), the source is "po-story", and the date is today.
+For the request details:
+- If the requirement doesn't say who asked, the requester is the PO running this skill (look up their name with `mcp__atlassian__atlassianUserInfo` if you don't know it), the source is "po-story", and the date is today.
+- If it does say who asked, take who, where and when from the requirement, and follow the story rules for anything it leaves out.
 
 ---
 
@@ -86,7 +88,7 @@ Display the generated story summary to the PO:
 ```
 **Generated Story:**
 
-Create audit logging submission capability
+{story title}
 
 **Background:** [1–2 line summary]
 

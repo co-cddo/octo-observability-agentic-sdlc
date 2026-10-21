@@ -86,7 +86,7 @@ Key points:
 - **Relevant context / links:** [documents, decisions or links mentioned in the requirement]
 ```
 
-Take the request details from the inputs or the requirement. Where something isn't stated, write "Not stated" rather than guessing.
+Take the request details from the inputs, or from the requirement where it mentions them. Turn a relative date such as "last Tuesday" into an actual date only if that is unambiguous; otherwise quote it as given. Where a detail isn't stated anywhere, write "Not stated" rather than guessing, and if it matters, ask about it in Open Questions.
 
 ### 2c: Business Value section
 
@@ -119,13 +119,13 @@ Take the request details from the inputs or the requirement. Where something isn
 
 ### 2f: Acceptance Criteria
 
-Generate business-focused ACs using Given-When-Then format. Cover:
+Generate business-focused ACs using Given-When-Then format, under an `### Acceptance Criteria` heading. Cover:
 
 **Happy path ACs** — core business scenarios with concrete examples:
 ```markdown
 #### AC1: {Business Scenario Description}
 **Given** {business precondition with concrete values/examples}
-**When** {user action in business language}
+**When** {user action or system event, in business language}
 **Then** {expected business outcome with specific numbers}
 ```
 
@@ -142,13 +142,13 @@ Generate business-focused ACs using Given-When-Then format. Cover:
 #### AC{N}: {Error Scenario}
 **Given** {condition that causes failure}
 **When** {user attempts the action}
-**Then** {system responds with appropriate error and HTTP status}
+**Then** {system responds with appropriate error, and HTTP status where relevant}
 ```
 
 **AC writing rules:**
 - Use **business language**, not implementation details
 - Include **concrete numbers and examples** (e.g., "100,000 monthly quota, 80,000 used" not "some quota")
-- HTTP status codes ARE acceptable (part of API contract)
+- HTTP status codes ARE acceptable where the story involves an API (part of the API contract)
 - Each AC independently testable by QA
 - Do NOT prescribe HOW (no "use parameterized queries", "apply caching", etc.)
 - Do NOT specify internal details (no JSON format, DB schema, error codes)
