@@ -1,0 +1,58 @@
+{
+  "type": "object",
+  "description": "The story runner's reply for one Jira ticket. Field meanings are in runner-prompt.md.",
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": ["drafted", "not_drafted"]
+    },
+    "reason": {
+      "type": "string",
+      "description": "Why the ticket was not drafted, addressed to the requester. Empty when drafted."
+    },
+    "suggested_title": {
+      "type": "string",
+      "description": "Story title from story-rules 2a. Posted as a suggestion only."
+    },
+    "story_markdown": {
+      "type": "string",
+      "description": "Story sections from ### Background to ### Open Questions."
+    },
+    "analysis_markdown": {
+      "type": "string",
+      "description": "Abstract Task, INVEST Evaluation and any Split Strategy."
+    },
+    "split_suggestions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "title": { "type": "string" },
+          "scope": { "type": "string" }
+        },
+        "required": ["title", "scope"],
+        "additionalProperties": false
+      }
+    },
+    "labels": {
+      "type": "array",
+      "description": "Up to three theme labels taken from the recent stories.",
+      "items": { "type": "string" }
+    },
+    "notes_for_reviewer": {
+      "type": "string",
+      "description": "Anything the reviewer should know that doesn't belong in the story. Empty if nothing."
+    }
+  },
+  "required": [
+    "status",
+    "reason",
+    "suggested_title",
+    "story_markdown",
+    "analysis_markdown",
+    "split_suggestions",
+    "labels",
+    "notes_for_reviewer"
+  ],
+  "additionalProperties": false
+}
