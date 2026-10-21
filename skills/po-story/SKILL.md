@@ -130,8 +130,6 @@ additional_fields: {
 }
 ```
 
-Every story this skill creates gets the **Build** component.
-
 **Handle errors gracefully:**
 - If Jira creation fails, report the error and offer to retry or debug
 - Do not silently fail
@@ -167,7 +165,6 @@ Return to PO:
 
 - **Do NOT proceed without Jira config** — ask, don't assume
 - **Do NOT create issue without PO confirmation** — explicit gate required
-- **Always set the Build component** — on every story created
 - **Do NOT duplicate existing stories** — always fetch recent stories from Jira (Step 2) and check against them
 - **Follow the content rules** in [references/story-rules.md](references/story-rules.md) — they apply to every story this skill writes
 
