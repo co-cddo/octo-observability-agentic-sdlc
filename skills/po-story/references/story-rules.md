@@ -2,13 +2,20 @@
 
 Rules for turning a natural-language requirement into a business-focused, INVEST-compliant user story. The interactive po-story skill ([../SKILL.md](../SKILL.md)) follows these rules, and so will the unattended runner, so keep workflow steps (Jira lookups, confirmations) out of this file.
 
+The section headings in Part 2 are read by name by the dev-analysis and dev-implement skills, and the OB-1104 story template in Jira mirrors them. Change all three together.
+
+**Inputs:**
+- **Requirement** — the requester's own words, taken as given. Do not ask clarifying questions; record ambiguities in Open Questions (2h).
+- **Request details** (if provided) — who asked, where the request came from, and the date.
+- **Recent stories** (if provided) — titles, labels and AC format of recent stories in the project, for matching style and spotting duplicates.
+
 ---
 
 ## Part 1: INVEST analysis
 
 ### 1a: Abstract task identification
 
-Analyze the PO's requirement at a conceptual level:
+Analyze the requirement at a conceptual level:
 
 ```
 ### Abstract Task: "[Feature Name]"
@@ -76,10 +83,14 @@ Example: `## [STORY-003] Create audit logging submission capability`
 [Business motivation, role, use cases — 2–3 sentences]
 
 Key points:
-- Business value and user needs
-- Relationship with other features
-- Why this capability is needed now
+- **Business value and user needs:** [what the user needs and why it matters to them]
+- **Relationship with other features:** [related stories, epic link, OKR / objective link]
+- **Why this is needed now:** [impact if this is not done]
+- **Requested by / source / date:** [who asked; where it came from, e.g. email, Slack thread, meeting, user research, support ticket; date requested]
+- **Relevant context / links:** [documents, decisions or links mentioned in the requirement]
 ```
+
+Take the request details from the inputs or the requirement. Where something isn't stated, write "Not stated" rather than guessing.
 
 ### 2c: Business Value section
 
@@ -146,14 +157,32 @@ Generate business-focused ACs using Given-When-Then format. Cover:
 - Do NOT prescribe HOW (no "use parameterized queries", "apply caching", etc.)
 - Do NOT specify internal details (no JSON format, DB schema, error codes)
 
-**Estimated effort:** Based on story size and functional points, estimate 1–5 days.
+### 2g: Estimated effort
 
-### 2g: Quality check
+```markdown
+### Estimated effort
+[1–5 days, based on story size and functional points]
+```
+
+If the estimate is more than 5 days, go back to the Split Strategy in 1b.
+
+### 2h: Open Questions
+
+Write the best story the requirement supports, then list here anything it leaves ambiguous and any assumption the story relies on that the requirement doesn't state, so the team can settle them in refinement.
+
+```markdown
+### Open Questions
+- [Specific question, naming the section or AC it affects, e.g. "AC2 assumes logs are kept for 30 days. Is that the right retention period?"]
+```
+
+If there are none, write `- None`.
+
+### 2i: Quality check
 
 Verify each generated story against:
 
 **Structure**:
- - [ ] All required sections present (Background, Business Value, Dependencies/Assumptions, Scope In/Out, ACs)
+ - [ ] All required sections present (Background, Business Value, Dependencies/Assumptions, Scope In/Out, ACs, Estimated effort, Open Questions)
  - [ ] Each AC uses Given-When-Then with concrete values
  - [ ] ACs written in business language
  - [ ] ACs cover happy path, validation/rules, error conditions
@@ -163,6 +192,8 @@ Verify each generated story against:
  - [ ] Scope In/Out clearly delineate boundaries
  - [ ] No duplication with existing Jira stories
  - [ ] QA engineer could write test cases from ACs alone
+ - [ ] Requester, source and date recorded (or marked "Not stated")
+ - [ ] Every assumption the ACs rely on that the requirement doesn't state is listed in Open Questions
 
 **Sizing**:
  - [ ] Max 2–3 functional points
@@ -173,7 +204,8 @@ Verify each generated story against:
 
 ## Content rules
 
-- **Do NOT summarize the PO prompt** — preserve full information when referencing
+- **Do NOT ask clarifying questions** — record ambiguities in Open Questions instead
+- **Do NOT summarize the requester's words** — preserve full information when referencing
 - **Do NOT leave placeholders** — generate complete, specific content
 - **ACs MUST be in business language** — no technical implementation details
 - **Each story MUST have concrete examples** — no vague acceptance criteria

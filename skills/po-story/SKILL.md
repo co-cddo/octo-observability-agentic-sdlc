@@ -24,7 +24,7 @@ Check if Jira config (cloud ID, project key) is known from prior conversation co
 > 2. **Project key** (e.g., "OCTO", "PROJ")
 > 3. **Epic link or default sprint** (optional — can be set later if unknown)"
 
-**IMPORTANT:** Ask ONLY these Jira configuration questions. Do NOT ask clarifying questions about the requirement itself (e.g., "what type of system?", "who is the audience?", "can you elaborate?"). Take the PO's requirement as-is and work with whatever information they provided. If details are ambiguous, surface them as risks in the Risk & Gap Analysis (Step 11) rather than interrogating the PO upfront.
+**IMPORTANT:** Ask ONLY these Jira configuration questions. Do NOT ask clarifying questions about the requirement itself (e.g., "what type of system?", "who is the audience?", "can you elaborate?"). Take the PO's requirement as-is and work with whatever information they provided. If details are ambiguous, record them in the story's Open Questions section (see the story rules) rather than interrogating the PO upfront.
 
 Wait for the user's reply before proceeding.
 
@@ -76,6 +76,8 @@ If splitting is recommended, also show the split rationale.
 
 Write each story as described in **Part 2** of the story rules, including its quality check. Use the product history from Step 2 for the story number and to avoid duplicating existing stories.
 
+For the request details, use whatever the PO's requirement says about who asked and where it came from. If it says nothing, the requester is the PO running this skill (look up their name with `mcp__atlassian__atlassianUserInfo` if you don't know it), the source is "po-story", and the date is today.
+
 ---
 
 ### Step 5: Confirm with PO
@@ -98,6 +100,8 @@ Display the generated story summary to the PO:
 
 **Estimated Effort:** 3–4 days
 **Acceptance Criteria:** {AC count} scenarios
+**Open Questions:**
+- [each open question, or "None"]
 
 ---
 
@@ -141,6 +145,7 @@ Return to PO:
 **URL:** https://{cloudId}/browse/{JIRA-KEY}
 **Acceptance Criteria:** {AC count} scenarios
 **Estimated Effort:** {days} days
+**Open Questions:** {count}, to settle in refinement
 
 ---
 
