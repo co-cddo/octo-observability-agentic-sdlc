@@ -10,7 +10,7 @@ The runner lives in a separate private repo, because Action logs in this public 
 | [`skills/po-story/references/story-rules.md`](../skills/po-story/references/story-rules.md) | The story rules, shared with the interactive skill |
 | [`skills/po-story/references/runner-output.schema.json`](../skills/po-story/references/runner-output.schema.json) | The structured-output schema for Claude's reply |
 
-Changes to those files reach the runner only when its pinned commit is updated, in a reviewed PR.
+Changes to those files reach the runner only when its pinned commit is updated, in a reviewed PR. Keep the two prompt files free of `../` paths: the AI gateway's firewall rejects any request that contains one.
 
 ## Labels
 
@@ -45,16 +45,17 @@ Comments written by the runner's service account are never sent as feedback.
 
 ## The Claude call
 
-- **System:** `runner-prompt.md` followed by `story-rules.md`, with a prompt-cache breakpoint after them, so tickets in the same run share the cached prompt.
+- **System:** `runner-prompt.md`, then `story-rules.md`, then the schema in a fenced `json` block headed "Output schema". A prompt-cache breakpoint goes after them, so tickets in the same run share the cached prompt.
 - **User:** the tagged inputs.
 - **Model:** Claude Opus 5.5 in an EU region. The model ID is configuration, for example `eu.anthropic.claude-opus-5-5`. Whether the runner reaches it through the organisation's AI gateway or Bedrock directly is still to be decided.
-- **Settings:** `output_config: {effort: "high", format: {type: "json_schema", schema: <runner-output.schema.json>}}`, and `max_tokens` of 16000. Leave thinking at its default. No tools.
+- **Settings:** `output_config: {effort: "high", format: {type: "json_schema", schema: <runner-output.schema.json>}}`, and `max_tokens` of 16000. Leave thinking at its default. No tools. Bedrock enforces the schema. On 2026-10-21 the AI gateway accepted `format` but ignored it, which is why the schema is also in the prompt and the runner always validates the reply itself.
 - **Stop reasons:** only `end_turn` is accepted. `refusal`, `max_tokens` or anything else is a failure.
 
 ## Checks before writing
 
 The runner checks the reply before changing anything in Jira:
 
+- The reply is a single JSON object that validates against the schema, after removing one surrounding ```` ```json ```` fence if there is one.
 - `story_markdown` has these headings, once each and in this order: `### Background`, `### Business Value`, `### Dependencies and Assumptions`, `### Scope In`, `### Scope Out`, `### Acceptance Criteria`, `### Estimated effort`, `### Open Questions`. They are the Part 2 headings in `story-rules.md`; change both together.
 - At least one AC has **Given**, **When** and **Then**.
 - No heading mentions "Original request".
@@ -131,5 +132,5 @@ A ticket can be drafted at most 5 times. After that, the runner adds `ai-failed`
 ## Not covered yet
 
 - An on-demand "Draft with AI" trigger from Jira, and running on AWS instead of GitHub Actions. Both have been considered and deferred.
-- Choosing the route to Claude: the AI gateway or Bedrock directly.
+- Choosing the route to Claude: the AI gateway or Bedrock directly. On 2026-10-21 the gateway's firewall returned `403 Forbidden` for any request containing `../`, even inside ticket text. Through the gateway, a ticket that mentions a relative path would fail. That would need a firewall exception for the runner's traffic, or Bedrock directly.
 - Reading attachments.

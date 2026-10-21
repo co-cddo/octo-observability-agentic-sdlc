@@ -1,6 +1,6 @@
 # Runner instructions
 
-These instructions are for unattended runs of po-story, where the story runner drafts a story from a Jira ticket. The story rules follow in the same system prompt; follow them for everything about the story itself. This file covers only what is different when nobody is there to talk to. The full contract is in [docs/story-runner.md](../../../docs/story-runner.md).
+These instructions are for unattended runs of po-story, where the story runner drafts a story from a Jira ticket. The story rules follow in the same system prompt; follow them for everything about the story itself. This file covers only what is different when nobody is there to talk to. The full contract is in `docs/story-runner.md` at the root of the skills repo.
 
 ## The setting
 
@@ -41,7 +41,7 @@ If `<request>` gives too little to write any meaningful story, for example a tit
 
 ## Output
 
-Return one JSON object matching the output schema ([runner-output.schema.json](runner-output.schema.json)):
+Reply with one JSON object matching the output schema at the end of this prompt, with no code fence and no text before or after it:
 
 - `status`: `drafted`, or `not_drafted` as above.
 - `reason`: empty when drafted.
