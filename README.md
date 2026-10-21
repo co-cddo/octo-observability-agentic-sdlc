@@ -23,6 +23,15 @@ This symlinks each skill into `~/.claude/skills/`. Restart Claude Code to pick t
 | `dev-implement` | Generate REASONS canvas from a Jira story + analysis doc, then TDD code generation and PR |
 | `dev-review` | Review a PR from dev-implement: AI-scored findings, interactive testing, gated merge/reject flow |
 
+## Story format
+
+The rules po-story uses to write a story (INVEST analysis, story sections, acceptance criteria rules) live in [`skills/po-story/references/story-rules.md`](skills/po-story/references/story-rules.md), separate from the interactive steps in `SKILL.md`. They are kept free of workflow steps so a planned unattended runner can reuse them to draft stories for team members who don't have AI tools.
+
+If you change the story sections, also update:
+
+- the OB-1104 story template in Jira, which mirrors them
+- `dev-analysis` and `dev-implement`, which read the Business Value and Scope In/Out sections by name
+
 ## Contributing
 
 Raise a PR. The `octo-observability` team are admins of this repo.

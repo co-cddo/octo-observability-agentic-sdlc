@@ -24,7 +24,7 @@ Check if Jira config (cloud ID, project key) is known from prior conversation co
 > 2. **Project key** (e.g., "OCTO", "PROJ")
 > 3. **Epic link or default sprint** (optional — can be set later if unknown)"
 
-**IMPORTANT:** Ask ONLY these Jira configuration questions. Do NOT ask clarifying questions about the requirement itself (e.g., "what type of system?", "who is the audience?", "can you elaborate?"). Take the PO's requirement as-is and work with whatever information they provided. If details are ambiguous, surface them as risks in the Risk & Gap Analysis (Step 11) rather than interrogating the PO upfront.
+**IMPORTANT:** Ask ONLY these Jira configuration questions. Do NOT ask clarifying questions about the requirement itself (e.g., "what type of system?", "who is the audience?", "can you elaborate?"). Take the PO's requirement as-is and work with whatever information they provided. If details are ambiguous, record them in the story's Open Questions section (see the story rules) rather than interrogating the PO upfront.
 
 Wait for the user's reply before proceeding.
 
@@ -39,69 +39,27 @@ Store these in conversation context so subsequent invocations in the same sessio
 Query existing stories via `mcp__atlassian__searchJiraIssuesUsingJql`:
 
 ```
-JQL: project = {projectKey} AND issuetype = Story ORDER BY created DESC
+JQL: project = {projectKey} AND issuetype = Story AND (labels IS EMPTY OR labels != template) ORDER BY created DESC
 Limit: 20 most recent stories
-Fields: summary, description, created, customfield_* (story points if available)
+Fields: summary, description, labels, parent, status, created
 ```
 
 **Process the results:**
-- Extract story titles and numbering patterns (e.g., STORY-001, STORY-002)
+- Extract story titles and their naming style, ignoring cancelled stories and status prefixes such as `[IN SPRINT]`
 - Note any recurring theme labels or epic associations
 - Scan AC patterns (if description contains "Given-When-Then", note the format)
-- Identify the next available story number
 
-**Output for context injection:** Summary of last 5-10 story titles + naming/numbering pattern + observed AC format.
+**Output for context injection:** Summary of last 5-10 story titles + naming style + observed labels and AC format. This is the "recent stories" input to the story rules.
 
 ---
 
 ### Step 3: INVEST Analysis and story generation
 
-#### Step 3a: Abstract task identification
+Read [references/story-rules.md](references/story-rules.md) before continuing. It holds the story rules that Steps 3 and 4 follow, which the planned unattended runner will also use.
 
-Analyze the PO's requirement at a conceptual level:
+#### Step 3a–3b: Analyse the requirement
 
-```
-### Abstract Task: "[Feature Name]"
-
-**Analysis Dimensions**:
-- **Core Responsibility**: [Primary purpose of this feature]
-- **Primary Operations**: [Main operations: create, query, update, delete, list, search]
-- **Key Constraints**: [Data uniqueness, permissions, associations, business rules]
-- **Technical Complexity**: [Low/Medium/High]
-- **Business Complexity**: [Low/Medium/High]
-```
-
-#### Step 3b: INVEST compliance check
-
-Evaluate the requirement:
-
-```
-### INVEST Evaluation:
-- ✅/❌ **Independent**: Can be developed, tested, deployed independently?
-- ✅/❌ **Negotiable**: Can design details be discussed with the team?
-- ✅/❌ **Valuable**: Does this provide clear business value?
-- ✅/❌ **Estimable**: Can effort be estimated (1–5 days)?
-- ✅/❌ **Small**: Can be completed within that timeframe?
-- ✅/❌ **Testable**: Are there clear acceptance criteria?
-
-**Conclusion**: [Needs splitting / Ready as-is]
-```
-
-If splitting is needed:
-
-```
-### Split Strategy
-**Dimensions** (choose most appropriate):
- - By operation type: CREATE-READ / UPDATE-DELETE / LIST-SEARCH
- - By complexity: Basic / Advanced / Admin
- - By user role: Regular user / Admin
- - By technical dependency: Core / Extension
-
-**Rules**:
- - Max 2–3 functional points per story
- - 1–5 day workload per story
- - Each story delivers independent business value
-```
+Produce the Abstract Task, the INVEST Evaluation and, if splitting is needed, the Split Strategy, as described in **Part 1** of the story rules.
 
 #### Step 3c: Display INVEST analysis to PO
 
@@ -115,117 +73,11 @@ If splitting is recommended, also show the split rationale.
 
 ### Step 4: Generate the story (or stories if split)
 
-For each story (if 1 story, do this once; if 3 stories, repeat 3 times):
+Write each story as described in **Part 2** of the story rules, including its quality check. Use the product history from Step 2 to match the style of recent stories and avoid duplicating them.
 
-#### 4a: Story title and number
-
-Use the next available story number from Step 2. Format:
-
-```
-## [STORY-{NEXT-NUM}] {Operation Description} API Development
-```
-
-Example: `## [STORY-003] Create audit logging submission capability`
-
-#### 4b: Background section
-
-```markdown
-### Background
-[Business motivation, role, use cases — 2–3 sentences]
-
-Key points:
-- Business value and user needs
-- Relationship with other features
-- Why this capability is needed now
-```
-
-#### 4c: Business Value section
-
-```markdown
-### Business Value
-- Provide {specific capability} for {role}
-- Support {specific need} in {business scenario}
-- Enable {key function} of {system goal}
-```
-
-#### 4d: Dependencies and Assumptions
-
-```markdown
-### Dependencies and Assumptions
-- **Prerequisites**: [Features/stories that must be completed first, if any]
-- **Data assumptions**: [What data/entities expected to exist]
-- **Integration points**: [External systems, APIs, services]
-- **Business constraints**: [Regulatory, contractual, organizational constraints]
-```
-
-#### 4e: Scope In / Scope Out
-
-```markdown
-### Scope In
-- [Feature included in this story — bullets]
-
-### Scope Out
-- [Feature NOT included — bullets]
-```
-
-#### 4f: Acceptance Criteria
-
-Generate business-focused ACs using Given-When-Then format. Cover:
-
-**Happy path ACs** — core business scenarios with concrete examples:
-```markdown
-#### AC1: {Business Scenario Description}
-**Given** {business precondition with concrete values/examples}
-**When** {user action in business language}
-**Then** {expected business outcome with specific numbers}
-```
-
-**Validation and business rule ACs**:
-```markdown
-#### AC{N}: {Validation Scenario}
-**Given** {invalid or edge-case input condition}
-**When** {user attempts the action}
-**Then** {system rejects with clear user-facing message}
-```
-
-**Error condition ACs**:
-```markdown
-#### AC{N}: {Error Scenario}
-**Given** {condition that causes failure}
-**When** {user attempts the action}
-**Then** {system responds with appropriate error and HTTP status}
-```
-
-**AC writing rules:**
-- Use **business language**, not implementation details
-- Include **concrete numbers and examples** (e.g., "100,000 monthly quota, 80,000 used" not "some quota")
-- HTTP status codes ARE acceptable (part of API contract)
-- Each AC independently testable by QA
-- Do NOT prescribe HOW (no "use parameterized queries", "apply caching", etc.)
-- Do NOT specify internal details (no JSON format, DB schema, error codes)
-
-**Estimated effort:** Based on story size and functional points, estimate 1–5 days.
-
-#### 4g: Quality check
-
-Verify each generated story against:
-
-**Structure**:
- - [ ] All required sections present (Background, Business Value, Dependencies/Assumptions, Scope In/Out, ACs)
- - [ ] Each AC uses Given-When-Then with concrete values
- - [ ] ACs written in business language
- - [ ] ACs cover happy path, validation/rules, error conditions
-
-**Business clarity**:
- - [ ] Business value clear for specific audience/role
- - [ ] Scope In/Out clearly delineate boundaries
- - [ ] No duplication with existing Jira stories
- - [ ] QA engineer could write test cases from ACs alone
-
-**Sizing**:
- - [ ] Max 2–3 functional points
- - [ ] Independently deliverable
- - [ ] 1–5 day workload estimate
+For the request details:
+- If the requirement doesn't say who asked, the requester is the PO running this skill (look up their name with `mcp__atlassian__atlassianUserInfo` if you don't know it), the source is "po-story", and the date is today.
+- If it does say who asked, take who, where and when from the requirement, and follow the story rules for anything it leaves out.
 
 ---
 
@@ -236,7 +88,7 @@ Display the generated story summary to the PO:
 ```
 **Generated Story:**
 
-[STORY-003] Create audit logging submission capability
+{story title}
 
 **Background:** [1–2 line summary]
 
@@ -249,6 +101,8 @@ Display the generated story summary to the PO:
 
 **Estimated Effort:** 3–4 days
 **Acceptance Criteria:** {AC count} scenarios
+**Open Questions:**
+- [each open question, or "None"]
 
 ---
 
@@ -267,10 +121,11 @@ Call `mcp__atlassian__createJiraIssue` with mapped fields:
 cloudId: {from Step 1}
 projectKey: {from Step 1}
 issueTypeName: "Story"
-summary: {story title, e.g., "[STORY-003] Create audit logging submission capability"}
+summary: {story title, e.g., "Create audit logging submission capability"}
 description: {full story body — all sections formatted as markdown}
 additional_fields: {
   "labels": [{inferred-labels-from-requirement}, "generated-story"],
+  "components": [{"name": "Build"}],
   [optional] "epic": {epic-id if provided in Step 1}
 }
 ```
@@ -289,17 +144,20 @@ Return to PO:
 ✅ Story created successfully!
 
 **Issue:** {JIRA-KEY} — {story-title}
-**URL:** https://{cloudId}/browse/{JIRA-KEY}
+**URL:** https://{site-domain}/browse/{JIRA-KEY}
 **Acceptance Criteria:** {AC count} scenarios
 **Estimated Effort:** {days} days
+**Open Questions:** {count}, to settle in refinement
 
 ---
 
 **Next steps:**
-- If dev team needs detailed context: Run `/spdd-analysis @{JIRA-KEY}` (requires project checkout)
+- If dev team needs detailed context: Run `/dev-analysis {JIRA-KEY}` (requires project checkout)
 - If more stories needed: Describe the next requirement
 - If revisions needed: Reply with feedback, I can regenerate
 ```
+
+`{site-domain}` is the Jira cloud domain from Step 1 (e.g. `mycompany.atlassian.net`), not the cloudId, which is a UUID.
 
 ---
 
@@ -307,13 +165,8 @@ Return to PO:
 
 - **Do NOT proceed without Jira config** — ask, don't assume
 - **Do NOT create issue without PO confirmation** — explicit gate required
-- **Do NOT assume existing story numbers** — always fetch from Jira to determine next available
-- **Do NOT summarize the PO prompt** — preserve full information when referencing
-- **Do NOT leave placeholders** — generate complete, specific content
-- **ACs MUST be in business language** — no technical implementation details
-- **Each story MUST have concrete examples** — no vague acceptance criteria
-- **Do NOT prescribe HOW** — only WHAT the expected behavior is
-- **Do NOT specify error JSON formats or P99 metrics** — those belong in `/spdd-reasons-canvas` Safeguards, not ACs
+- **Do NOT duplicate existing stories** — always fetch recent stories from Jira (Step 2) and check against them
+- **Follow the content rules** in [references/story-rules.md](references/story-rules.md) — they apply to every story this skill writes
 
 ---
 
@@ -322,14 +175,14 @@ Return to PO:
 After the story is created in Jira, the dev team can run:
 
 ```
-/spdd-analysis JIRA-KEY
-  → Enriched context (domain concepts, strategy, risks)
+/dev-analysis JIRA-KEY
+  → Enriched context (domain concepts, strategy, risks) + draft PR
 
-/spdd-reasons-canvas
-  → REASONS Canvas (technical approach, safeguards, implementation)
+/dev-implement JIRA-KEY
+  → REASONS Canvas (technical approach, safeguards) + TDD implementation code
 
-/spdd-generate
-  → Implementation code
+/dev-review JIRA-KEY
+  → AI-scored review, manual testing, gated merge
 ```
 
 This skill generates the **"what"** and **"for whom"** layer. Dev team adds the **"why"** and **"how"** layers downstream.
@@ -342,6 +195,7 @@ This skill generates the **"what"** and **"for whom"** layer. Dev team adds the 
 |-------|-----------|
 | "Atlassian MCP not accessible" | Verify Jira credentials. Check that `mcp__atlassian__` tools are available in this session. |
 | "Project key not found" | Verify project key with user (case-sensitive). Check against `mcp__atlassian__getVisibleJiraProjects`. |
+| "Component name 'Build' is not valid" | The project has no Build component. Tell the PO and ask whether to create the story without it; don't silently drop it. |
 | "AC descriptions are too technical" | Rephrase using business language: "system rejects the request" instead of "return HTTP 400 with error code E_INVALID". |
 | "Story is too large" | Split into 2–3 stories using the "By operation type" or "By complexity" dimension. Re-run analysis. |
 | "Can't fetch product history" | Check JQL syntax. Verify issue type name is "Story" (case-sensitive in Jira). Retry with simpler JQL. |

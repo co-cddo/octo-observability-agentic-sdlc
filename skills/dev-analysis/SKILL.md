@@ -361,7 +361,7 @@ Code Exploration Results:
 Prior SPDD Context:
 {relevant risk patterns from Step 5, or "None available"}
 
-Your task: Surface everything that could cause problems. Output the following markdown section:
+Your task: Surface everything that could cause problems. If the story description has an Open Questions section (written by po-story), list each question not answered elsewhere in the description under Requirement Ambiguities, marked "(from story Open Questions)". Output the following markdown section:
 
 ### Risk & Gap Analysis
 
