@@ -25,12 +25,13 @@ This symlinks each skill into `~/.claude/skills/`. Restart Claude Code to pick t
 
 ## Story format
 
-The rules po-story uses to write a story (INVEST analysis, story sections, acceptance criteria rules) live in [`skills/po-story/references/story-rules.md`](skills/po-story/references/story-rules.md), separate from the interactive steps in `SKILL.md`. They are kept free of workflow steps so a planned unattended runner can reuse them to draft stories for team members who don't have AI tools.
+The rules po-story uses to write a story (INVEST analysis, story sections, acceptance criteria rules) live in [`skills/po-story/references/story-rules.md`](skills/po-story/references/story-rules.md), separate from the interactive steps in `SKILL.md`. They are kept free of workflow steps so a planned unattended runner can reuse them to draft stories for team members who don't have AI tools. [`docs/story-runner.md`](docs/story-runner.md) is the contract that runner implements.
 
 If you change the story sections, also update:
 
 - the OB-1104 story template in Jira, which mirrors them
 - `dev-analysis` and `dev-implement`, which read the Business Value and Scope In/Out sections by name
+- the runner's heading check in `docs/story-runner.md`
 
 ## Contributing
 
