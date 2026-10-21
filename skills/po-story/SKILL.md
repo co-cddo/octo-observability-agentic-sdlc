@@ -125,9 +125,12 @@ summary: {story title, e.g., "Create audit logging submission capability"}
 description: {full story body — all sections formatted as markdown}
 additional_fields: {
   "labels": [{inferred-labels-from-requirement}, "generated-story"],
+  "components": [{"name": "Build"}],
   [optional] "epic": {epic-id if provided in Step 1}
 }
 ```
+
+Every story this skill creates gets the **Build** component.
 
 **Handle errors gracefully:**
 - If Jira creation fails, report the error and offer to retry or debug
@@ -164,6 +167,7 @@ Return to PO:
 
 - **Do NOT proceed without Jira config** — ask, don't assume
 - **Do NOT create issue without PO confirmation** — explicit gate required
+- **Always set the Build component** — on every story created
 - **Do NOT duplicate existing stories** — always fetch recent stories from Jira (Step 2) and check against them
 - **Follow the content rules** in [references/story-rules.md](references/story-rules.md) — they apply to every story this skill writes
 
@@ -194,6 +198,7 @@ This skill generates the **"what"** and **"for whom"** layer. Dev team adds the 
 |-------|-----------|
 | "Atlassian MCP not accessible" | Verify Jira credentials. Check that `mcp__atlassian__` tools are available in this session. |
 | "Project key not found" | Verify project key with user (case-sensitive). Check against `mcp__atlassian__getVisibleJiraProjects`. |
+| "Component name 'Build' is not valid" | The project has no Build component. Tell the PO and ask whether to create the story without it; don't silently drop it. |
 | "AC descriptions are too technical" | Rephrase using business language: "system rejects the request" instead of "return HTTP 400 with error code E_INVALID". |
 | "Story is too large" | Split into 2–3 stories using the "By operation type" or "By complexity" dimension. Re-run analysis. |
 | "Can't fetch product history" | Check JQL syntax. Verify issue type name is "Story" (case-sensitive in Jira). Retry with simpler JQL. |
