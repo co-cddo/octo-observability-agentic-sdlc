@@ -45,12 +45,11 @@ Fields: summary, description, created, customfield_* (story points if available)
 ```
 
 **Process the results:**
-- Extract story titles and numbering patterns (e.g., STORY-001, STORY-002)
+- Extract story titles and their naming style
 - Note any recurring theme labels or epic associations
 - Scan AC patterns (if description contains "Given-When-Then", note the format)
-- Identify the next available story number
 
-**Output for context injection:** Summary of last 5-10 story titles + naming/numbering pattern + observed AC format.
+**Output for context injection:** Summary of last 5-10 story titles + naming style + observed labels and AC format. This is the "recent stories" input to the story rules.
 
 ---
 
@@ -74,7 +73,7 @@ If splitting is recommended, also show the split rationale.
 
 ### Step 4: Generate the story (or stories if split)
 
-Write each story as described in **Part 2** of the story rules, including its quality check. Use the product history from Step 2 for the story number and to avoid duplicating existing stories.
+Write each story as described in **Part 2** of the story rules, including its quality check. Use the product history from Step 2 to match the style of recent stories and avoid duplicating them.
 
 For the request details, use whatever the PO's requirement says about who asked and where it came from. If it says nothing, the requester is the PO running this skill (look up their name with `mcp__atlassian__atlassianUserInfo` if you don't know it), the source is "po-story", and the date is today.
 
@@ -87,7 +86,7 @@ Display the generated story summary to the PO:
 ```
 **Generated Story:**
 
-[STORY-003] Create audit logging submission capability
+Create audit logging submission capability
 
 **Background:** [1–2 line summary]
 
@@ -120,7 +119,7 @@ Call `mcp__atlassian__createJiraIssue` with mapped fields:
 cloudId: {from Step 1}
 projectKey: {from Step 1}
 issueTypeName: "Story"
-summary: {story title, e.g., "[STORY-003] Create audit logging submission capability"}
+summary: {story title, e.g., "Create audit logging submission capability"}
 description: {full story body — all sections formatted as markdown}
 additional_fields: {
   "labels": [{inferred-labels-from-requirement}, "generated-story"],
@@ -142,7 +141,7 @@ Return to PO:
 ✅ Story created successfully!
 
 **Issue:** {JIRA-KEY} — {story-title}
-**URL:** https://{cloudId}/browse/{JIRA-KEY}
+**URL:** https://{site-domain}/browse/{JIRA-KEY}
 **Acceptance Criteria:** {AC count} scenarios
 **Estimated Effort:** {days} days
 **Open Questions:** {count}, to settle in refinement
@@ -150,10 +149,12 @@ Return to PO:
 ---
 
 **Next steps:**
-- If dev team needs detailed context: Run `/spdd-analysis @{JIRA-KEY}` (requires project checkout)
+- If dev team needs detailed context: Run `/dev-analysis {JIRA-KEY}` (requires project checkout)
 - If more stories needed: Describe the next requirement
 - If revisions needed: Reply with feedback, I can regenerate
 ```
+
+`{site-domain}` is the Jira cloud domain from Step 1 (e.g. `mycompany.atlassian.net`), not the cloudId, which is a UUID.
 
 ---
 
@@ -161,7 +162,7 @@ Return to PO:
 
 - **Do NOT proceed without Jira config** — ask, don't assume
 - **Do NOT create issue without PO confirmation** — explicit gate required
-- **Do NOT assume existing story numbers** — always fetch from Jira to determine next available
+- **Do NOT duplicate existing stories** — always fetch recent stories from Jira (Step 2) and check against them
 - **Follow the content rules** in [references/story-rules.md](references/story-rules.md) — they apply to every story this skill writes
 
 ---
@@ -171,14 +172,14 @@ Return to PO:
 After the story is created in Jira, the dev team can run:
 
 ```
-/spdd-analysis JIRA-KEY
-  → Enriched context (domain concepts, strategy, risks)
+/dev-analysis JIRA-KEY
+  → Enriched context (domain concepts, strategy, risks) + draft PR
 
-/spdd-reasons-canvas
-  → REASONS Canvas (technical approach, safeguards, implementation)
+/dev-implement JIRA-KEY
+  → REASONS Canvas (technical approach, safeguards) + TDD implementation code
 
-/spdd-generate
-  → Implementation code
+/dev-review JIRA-KEY
+  → AI-scored review, manual testing, gated merge
 ```
 
 This skill generates the **"what"** and **"for whom"** layer. Dev team adds the **"why"** and **"how"** layers downstream.

@@ -66,15 +66,11 @@ If splitting is needed:
 
 For each story (if 1 story, do this once; if 3 stories, repeat 3 times):
 
-### 2a: Story title and number
+### 2a: Story title
 
-Use the next available story number from Step 2. Format:
+A short title in business language that states the outcome, in the style of the recent stories. Do not add a story number: the Jira key is the story's number.
 
-```
-## [STORY-{NEXT-NUM}] {Operation Description} API Development
-```
-
-Example: `## [STORY-003] Create audit logging submission capability`
+Example: `Create audit logging submission capability`
 
 ### 2b: Background section
 
@@ -210,4 +206,4 @@ Verify each generated story against:
 - **ACs MUST be in business language** — no technical implementation details
 - **Each story MUST have concrete examples** — no vague acceptance criteria
 - **Do NOT prescribe HOW** — only WHAT the expected behavior is
-- **Do NOT specify error JSON formats or P99 metrics** — those belong in `/spdd-reasons-canvas` Safeguards, not ACs
+- **Do NOT specify error JSON formats or P99 metrics** — those belong in the Safeguards of the REASONS canvas that dev-implement writes, not ACs
