@@ -41,7 +41,7 @@ Each input is sent as a tagged section of the user message, in the order listed 
 | `today` | Today's date | Same |
 | `previous_attempt_problems` | Only on the retry described under Checks | Same |
 
-Comments written by the runner's service account are never sent as feedback.
+The runner's own draft and failure comments are never sent as feedback. Other comments are, even when a person shares the runner's account.
 
 ## The Claude call
 
