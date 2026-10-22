@@ -34,7 +34,7 @@ Each input is sent as a tagged section of the user message, in the order listed 
 | Section | First draft | Redraft |
 |---|---|---|
 | `request` | The ticket's title and description | The ticket's title and the content of the Original request block. If someone deleted that block, use the whole description and say so in the comment. Never the AI's own draft. |
-| `current_draft` | Not sent | The story part of the description, only if its hash differs from `draft_hash` (a person edited it) |
+| `current_draft` | Not sent | The story part of the description, if it contains a person's edits: its hash differs from `draft_hash` (edited since the last draft), or `includes_person_edits` is true (edited in an earlier round). A draft only the AI wrote is never sent. |
 | `feedback` | All comments | Comments created after `drafted_at` |
 | `request_details` | Reporter's display name; source "Jira ticket {KEY}"; the ticket's created date | Same |
 | `recent_stories` | The same search as po-story Step 2: titles, labels, and whether each uses Given-When-Then | Same |
@@ -124,6 +124,7 @@ Rules {short commit} · Model {model ID} · Run {link}
 | `rules_commit` | The pinned commit of this repo |
 | `model` | The model ID used |
 | `run_url` | Link to the Actions run |
+| `includes_person_edits` | True once a person has edited any draft of this ticket |
 
 ## Failures and limits
 
