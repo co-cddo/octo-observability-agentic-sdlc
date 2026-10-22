@@ -1,6 +1,6 @@
 # Story rules
 
-Rules for turning a natural-language requirement into a business-focused, INVEST-compliant user story. The interactive po-story skill ([../SKILL.md](../SKILL.md)) follows these rules, and so will the unattended runner, so keep workflow steps (Jira lookups, confirmations) out of this file.
+Rules for turning a natural-language requirement into a business-focused, INVEST-compliant user story. The interactive po-story skill (`SKILL.md`, one folder up) follows these rules, and so will the unattended runner, so keep workflow steps (Jira lookups, confirmations) out of this file.
 
 The section headings in Part 2 are read by name by the dev-analysis and dev-implement skills, and the OB-1104 story template in Jira mirrors them. Change all three together.
 
