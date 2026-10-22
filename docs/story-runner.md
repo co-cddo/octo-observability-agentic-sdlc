@@ -2,7 +2,7 @@
 
 The story runner lets people without AI tools get a po-story story. They raise an OB ticket in their own words and add the `ai-draft` label. A scheduled job then rewrites the ticket's description as a story and posts its analysis as a comment. A person reviews the draft before refinement.
 
-The runner lives in a separate private repo, because Action logs in this public repo would be public. It isn't built yet. This document is the contract it implements. Three files in this repo, read at a pinned commit, define what Claude is asked and must return:
+The runner lives in the private repo `co-cddo/octo-observability-aiops`, as `services/story_runner`, because Action logs in this public repo would be public. This document is the contract it implements. Three files in this repo, read at a pinned commit, define what Claude is asked and must return:
 
 | File | Role |
 |---|---|
@@ -45,11 +45,24 @@ Comments written by the runner's service account are never sent as feedback.
 
 ## The Claude call
 
-- **System:** `runner-prompt.md`, then `story-rules.md`, then the schema in a fenced `json` block headed "Output schema". A prompt-cache breakpoint goes after them, so tickets in the same run share the cached prompt.
-- **User:** the tagged inputs.
-- **Model:** Claude Opus 5.5 in an EU region. The model ID is configuration, for example `eu.anthropic.claude-opus-5-5`. Whether the runner reaches it through the organisation's AI gateway or Bedrock directly is still to be decided.
-- **Settings:** `output_config: {effort: "high", format: {type: "json_schema", schema: <runner-output.schema.json>}}`, and `max_tokens` of 16000. Leave thinking at its default. No tools. Bedrock enforces the schema. On 2026-10-21 the AI gateway accepted `format` but ignored it, which is why the schema is also in the prompt and the runner always validates the reply itself.
-- **Stop reasons:** only `end_turn` is accepted. `refusal`, `max_tokens` or anything else is a failure.
+The runner calls the organisation's AI gateway (LiteLLM in front of Bedrock) through its OpenAI-compatible chat completions API, `{gateway}/v1/chat/completions`, using the `openai` SDK. The model call sits behind a small interface in the runner, so calling Bedrock directly could be added later.
+
+- **System message:** `runner-prompt.md`, then `story-rules.md`, then the schema in a fenced `json` block headed "Output schema". Send it as one text content part with `cache_control: {type: "ephemeral"}`, so tickets in the same run share the cached prompt.
+- **User message:** the tagged inputs.
+- **Model:** Claude Opus 5.5 in an EU region. The model ID is configuration, by default `eu.anthropic.claude-opus-5-5`.
+- **Settings:** `max_tokens` of 16000 and `reasoning_effort: "high"`. No tools, and no `response_format`.
+- **Accepted reply:** only `finish_reason: "stop"`. `length` or anything else is a failure.
+
+What the gateway did with these settings on 2026-10-22:
+
+| Setting | Behaviour |
+|---|---|
+| `response_format: json_schema` | Rejected with a 400. The gateway turns it into a forced tool call, which Claude Opus 5.5 doesn't allow. |
+| `response_format: json_object` | Accepted but not enforced. The reply still came back in a code fence. |
+| Prompt caching | Works. Cached tokens show in `usage.prompt_tokens_details.cached_tokens`. |
+| `reasoning_effort: "high"` | Accepted. Whether it is honoured is unverified. |
+
+That's why the schema is in the prompt and the runner always validates the reply itself.
 
 ## Checks before writing
 
@@ -132,5 +145,5 @@ A ticket can be drafted at most 5 times. After that, the runner adds `ai-failed`
 ## Not covered yet
 
 - An on-demand "Draft with AI" trigger from Jira, and running on AWS instead of GitHub Actions. Both have been considered and deferred.
-- Choosing the route to Claude: the AI gateway or Bedrock directly. On 2026-10-21 the gateway's firewall returned `403 Forbidden` for any request containing `../`, even inside ticket text. Through the gateway, a ticket that mentions a relative path would fail. That would need a firewall exception for the runner's traffic, or Bedrock directly.
+- Tickets that mention a relative path. On 2026-10-21 the gateway's firewall returned `403 Forbidden` for any request containing `../`, even inside ticket text, so such a ticket fails. Fixing that needs a firewall exception for the runner's traffic, or calling Bedrock directly.
 - Reading attachments.
